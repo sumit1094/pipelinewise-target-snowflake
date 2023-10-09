@@ -102,12 +102,25 @@ def flatten_record(d, schema=None, parent_key=None, sep='__', level=0, max_level
         parent_key = []
 
     items = []
+    # for k, v in d.items():
+    #     new_key = flatten_key(k, parent_key, sep)
+    #     if isinstance(v, collections.abc.MutableMapping) and level < max_level:
+    #         items.extend(flatten_record(v, schema, parent_key + [k], sep=sep, level=level + 1,
+    #                                     max_level=max_level).items())
+    #     else:
+    #         items.append((new_key, json.dumps(v) if _should_json_dump_value(k, v, schema) else v))
+
     for k, v in d.items():
         new_key = flatten_key(k, parent_key, sep)
         if isinstance(v, collections.abc.MutableMapping) and level < max_level:
-            items.extend(flatten_record(v, schema, parent_key + [k], sep=sep, level=level + 1,
-                                        max_level=max_level).items())
+            items.extend(flatten_record(v, schema, parent_key + [k], sep=sep, level=level + 1, max_level=max_level).items())
+        elif isinstance(v, list):
+            # Handle lists by flattening them and adding index-based keys
+            for i, item in enumerate(v):
+                list_key = f"{new_key}[{i}]"
+                items.append((list_key, item))
         else:
-            items.append((new_key, json.dumps(v) if _should_json_dump_value(k, v, schema) else v))
+            items.append((new_key, v))
+
 
     return dict(items)
