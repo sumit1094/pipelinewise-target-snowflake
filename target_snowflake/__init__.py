@@ -169,10 +169,9 @@ def persist_lines(config, lines, table_cache=None, file_format_type: FileFormatT
 
             # append record
             if config.get('add_metadata_columns') or config.get('hard_delete'):
-                records_to_load[stream] = o['record']
-                # records_to_load[stream][primary_key_string] = stream_utils.add_metadata_values_to_record(o)
+                records_to_load[stream][primary_key_string] = stream_utils.add_metadata_values_to_record(o)
             else:
-                records_to_load[stream] = o['record']
+                records_to_load[stream][primary_key_string] = o['record']
 
             if archive_load_files and stream in archive_load_files_data:
                 # Keep track of min and max of the designated column
