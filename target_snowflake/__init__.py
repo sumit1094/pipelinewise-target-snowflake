@@ -159,8 +159,11 @@ def persist_lines(config, lines, table_cache=None, file_format_type: FileFormatT
             if not primary_key_string:
                 primary_key_string = f'RID-{total_row_count[stream]}'
 
+            # if stream not in records_to_load:
+            #     records_to_load[stream] = {}
+
             if stream not in records_to_load:
-                records_to_load[stream] = {}
+                records_to_load[stream] = []
 
             # increment row count only when a new PK is encountered in the current batch
             if primary_key_string not in records_to_load[stream]:
