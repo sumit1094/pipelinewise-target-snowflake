@@ -172,8 +172,6 @@ def persist_lines(config, lines, table_cache=None, file_format_type: FileFormatT
             #     records_to_load[stream][primary_key_string] = stream_utils.add_metadata_values_to_record(o)
             # else:
             #     records_to_load[stream][primary_key_string] = o['record']
-
-            # records_to_load[stream] = o['record']
             
             if stream not in records_to_load:
                 records_to_load[stream] = {}
