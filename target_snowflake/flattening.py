@@ -102,33 +102,12 @@ def flatten_record(d, schema=None, parent_key=None, sep='__', level=0, max_level
         parent_key = []
 
     items = []
-    # for k, v in d.items():
-    #     new_key = flatten_key(k, parent_key, sep)
-    #     if isinstance(v, collections.abc.MutableMapping) and level < max_level:
-    #         items.extend(flatten_record(v, schema, parent_key + [k], sep=sep, level=level + 1,
-    #                                     max_level=max_level).items())
-    #     else:
-    #         items.append((new_key, json.dumps(v) if _should_json_dump_value(k, v, schema) else v))
-
-    if isinstance(d, list):
-        # If the input is a list, iterate over its elements
-        for i, item in enumerate(d):
-            new_key = flatten_key(str(i), parent_key, sep)
-            if isinstance(item, (dict, list)):
-                # Recursively process dictionaries and lists within the list
-                items.extend(flatten_record(item, schema, parent_key=new_key, sep=sep, level=level, max_level=max_level).items())
-            else:
-                # Handle non-dictionary and non-list items
-                items.append((new_key, item))
-    elif isinstance(d, dict):
-        for k, v in d.items():
-            new_key = flatten_key(k, parent_key, sep)
-            if isinstance(v, (dict, list)) and level < max_level:
-                items.extend(flatten_record(v, schema, parent_key=new_key, sep=sep, level=level + 1, max_level=max_level).items())
-            else:
-                items.append((new_key, v))
-    else:
-        # Handle other data types gracefully
-        items.append(('unknown', d))
+    for k, v in d.items():
+        new_key = flatten_key(k, parent_key, sep)
+        if isinstance(v, collections.abc.MutableMapping) and level < max_level:
+            items.extend(flatten_record(v, schema, parent_key + [k], sep=sep, level=level + 1,
+                                        max_level=max_level).items())
+        else:
+            items.append((new_key, json.dumps(v) if _should_json_dump_value(k, v, schema) else v))
 
     return dict(items)
