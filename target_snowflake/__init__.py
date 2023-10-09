@@ -173,8 +173,27 @@ def persist_lines(config, lines, table_cache=None, file_format_type: FileFormatT
             # else:
             #     records_to_load[stream][primary_key_string] = o['record']
 
-            records_to_load[stream] = o['record']
+            # records_to_load[stream] = o['record']
+            
+            if stream not in records_to_load:
+                records_to_load[stream] = {}
+            
+            # Increment the row count for the current stream
+            row_count[stream] += 1
+            total_row_count[stream] += 1
+            
+            # Process and append the record
+            if config.get('add_metadata_columns') or config.get('hard_delete'):
+                primary_key_string = stream_to_sync[stream].record_primary_key_string(o['record'])
+                if not primary_key_string:
+                    primary_key_string = f'RID-{total_row_count[stream]}'
+                records_to_load[stream][primary_key_string] = stream_utils.add_metadata_values_to_record(o)
+            else:
+                # Assuming 'o' contains the record data
+                records_to_load[stream][f'RID-{total_row_count[stream]}'] = o['record']
 
+            
+            
             if archive_load_files and stream in archive_load_files_data:
                 # Keep track of min and max of the designated column
                 stream_archive_load_files_values = archive_load_files_data[stream]
